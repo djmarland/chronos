@@ -1,0 +1,35 @@
+version: '2'
+
+services:
+
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/app
+      - ./nginx/dev/www.chronos.app.conf:/etc/nginx/conf.d/www.chronos.app.conf
+      - ./nginx/dev/api.chronos.app.conf:/etc/nginx/conf.d/api.chronos.app.conf
+    links:
+      - php
+
+  php:
+    image: php:7-fpm
+    volumes:
+      - .:/app
+    links:
+      - db
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: password
+
+volumes:
+  db_data:
